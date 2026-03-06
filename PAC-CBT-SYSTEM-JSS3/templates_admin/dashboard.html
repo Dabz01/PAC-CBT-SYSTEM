@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+  <div>
+    <h3 class="mb-0">Dashboard</h3>
+    <div class="text-muted small">Live activity and recent updates across the system.</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('exams') }}"><i class="bi bi-journal-text me-1"></i>Manage Exams</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users') }}"><i class="bi bi-people me-1"></i>Manage Users</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <div class="card admin-card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-success-subtle text-success border border-success border-opacity-25">Live</span>
+          <span class="fw-semibold">Active Students (In Exam)</span>
+        </div>
+        <span class="text-muted small">heartbeat ≤ 2 mins</span>
+      </div>
+      <div class="card-body p-0">
+        {% if active_attempts and active_attempts|length > 0 %}
+        <div class="table-responsive">
+          <table class="table table-dark table-hover table-sm mb-0 align-middle">
+            <thead>
+              <tr>
+                <th class="ps-3">Student</th>
+                <th>Class</th>
+                <th>Exam</th>
+                <th class="text-end pe-3">Last Seen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in active_attempts %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold">{{ a.full_name }}</div>
+                </td>
+                <td><span class="badge bg-secondary-subtle text-dark border border-light border-opacity-10">{{ a.student_class }}</span></td>
+                <td>
+                  <div class="fw-semibold">{{ a.exam_title }}</div>
+                  <div class="text-muted small">{{ a.exam_subject }}</div>
+                </td>
+                <td class="text-end pe-3 text-muted small">
+                  {{ a.last_seen or a.started_at }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="p-3 text-muted">No active attempts right now.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card admin-card h-100">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-cloud-upload text-warning"></i>
+          <span class="fw-semibold">Recent Teacher Uploads</span>
+        </div>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('exams') }}">View Exams</a>
+      </div>
+      <div class="card-body">
+        {% if recent_uploads and recent_uploads|length > 0 %}
+          <div class="list-group list-group-flush">
+            {% for u in recent_uploads %}
+            <div class="list-group-item bg-transparent text-dark border-secondary border-opacity-25">
+              <div class="d-flex justify-content-between gap-2">
+                <div>
+                  <div class="fw-semibold">{{ u.detail }}</div>
+                  <div class="text-muted small">
+                    by <span class="text-dark">{{ u.actor_username or 'teacher' }}</span>
+                    {% if u.exam_title %} • <span class="text-dark">{{ u.exam_title }}</span>{% endif %}
+                  </div>
+                </div>
+                <div class="text-muted small text-end">{{ u.created_at }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted">No uploads recorded yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <div class="card admin-card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-activity text-info"></i>
+          <span class="fw-semibold">Student Activity</span>
+        </div>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('results') }}">Open Results</a>
+      </div>
+      <div class="card-body">
+        {% if student_events and student_events|length > 0 %}
+          <div class="list-group list-group-flush">
+            {% for e in student_events %}
+            <div class="list-group-item bg-transparent text-dark border-secondary border-opacity-25">
+              <div class="d-flex justify-content-between gap-2">
+                <div>
+                  <div class="fw-semibold">{{ e.detail }}</div>
+                  <div class="text-muted small">
+                    {% if e.actor_username %}{{ e.actor_username }}{% else %}student{% endif %}
+                    {% if e.exam_title %} • <span class="text-dark">{{ e.exam_title }}</span>{% endif %}
+                  </div>
+                </div>
+                <div class="text-muted small text-end">{{ e.created_at }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted">No student events recorded yet.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+  <div>
+    <h3 class="mb-0">Subjects</h3>
+    <div class="text-muted small">Add or remove subjects. This list is used when creating students.</div>
+  </div>
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users') }}"><i class="bi bi-arrow-left me-1"></i>Back to Users</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-5">
+    <div class="card admin-card">
+      <div class="card-header fw-semibold">Add Subject</div>
+      <div class="card-body">
+        <form method="post" class="d-flex gap-2">
+          <input type="hidden" name="action" value="add">
+          <input class="form-control" name="name" placeholder="e.g., Further Mathematics" required>
+          <button class="btn btn-gold" type="submit"><i class="bi bi-plus-lg me-1"></i>Add</button>
+        </form>
+        <div class="text-muted small mt-2">Subjects added here will immediately appear in the student creation form.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-7">
+    <div class="card admin-card">
+      <div class="card-header fw-semibold">Current Subjects</div>
+      <div class="card-body">
+        {% if subjects and subjects|length > 0 %}
+          <div class="list-group list-group-flush">
+            {% for s in subjects %}
+              <div class="list-group-item bg-transparent text-dark border-secondary border-opacity-25 d-flex align-items-center justify-content-between">
+                <div class="fw-semibold">{{ s.name }}</div>
+                <form method="post" class="m-0">
+                  <input type="hidden" name="action" value="remove">
+                  <input type="hidden" name="subject_id" value="{{ s.id }}">
+                  <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Remove {{ s.name }}?')">
+                    <i class="bi bi-trash me-1"></i>Remove
+                  </button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-muted">No subjects found.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

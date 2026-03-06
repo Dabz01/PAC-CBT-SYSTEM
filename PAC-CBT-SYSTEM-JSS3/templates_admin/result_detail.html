@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <h3 class="mb-0">Result Detail</h3>
+    <div class="text-muted">
+      {{ attempt.title }} — {{ attempt.class }} |
+      {{ attempt.full_name }} (@{{ attempt.student_username }})
+    </div>
+  </div>
+  <a class="btn btn-outline-secondary" href="{{ url_for('results') }}">Back</a>
+</div>
+
+<div class="row mt-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>Answers</h5>
+        {% for a in answers %}
+          <div class="border rounded p-3 mb-2 bg-white">
+            <div class="fw-semibold">{{ loop.index }}. {{ a.question_text }}</div>
+            <div class="mt-2 small">
+              <div><strong>A.</strong> {{ a.option_a }}</div>
+              <div><strong>B.</strong> {{ a.option_b }}</div>
+              <div><strong>C.</strong> {{ a.option_c }}</div>
+              <div><strong>D.</strong> {{ a.option_d }}</div>
+            </div>
+            <div class="mt-2">
+              <span class="badge bg-info text-dark">Selected: {{ a.selected_option or '-' }}</span>
+              <span class="badge bg-secondary">Correct: {{ a.correct_option }}</span>
+              <span class="badge bg-light text-dark">Marks: {{ a.marks }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 mt-3 mt-lg-0">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>Attempt</h5>
+        <div class="small text-muted">Started: {{ attempt.started_at }}</div>
+        <div class="small text-muted">Submitted: {{ attempt.submitted_at }}</div>
+        <div class="mt-2">
+          <span class="badge bg-success">Score: {{ attempt.score }}</span>
+          <span class="badge bg-warning text-dark">Violations: {{ attempt.violations }}</span>
+        </div>
+
+        <hr>
+        <h6>Proctoring Logs</h6>
+        {% if logs|length == 0 %}
+          <p class="text-muted small mb-0">No violations recorded.</p>
+        {% else %}
+          <ul class="list-group list-group-flush">
+            {% for l in logs %}
+              <li class="list-group-item">
+                <div class="fw-semibold">{{ l.violation_type }}</div>
+                <div class="small text-muted">{{ l.created_at }}</div>
+                {% if l.details %}<div class="small">{{ l.details }}</div>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

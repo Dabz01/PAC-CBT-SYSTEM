@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Create Exam</h3>
+  <a class="btn btn-outline-secondary" href="{{ url_for('exams') }}">Back</a>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <form method="post" style="max-width:720px;">
+      <div class="mb-2">
+        <label class="form-label">Title</label>
+        <input class="form-control" name="title" required>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Class</label>
+        <select class="form-select" name="class" required>
+          <option value="">Select class...</option>
+          {% for c in ALLOWED_CLASSES %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Start time</label>
+        <input class="form-control" type="datetime-local" name="start_at" value="{{ default_start }}" required>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Duration (minutes)</label>
+        <input class="form-control" type="number" min="1" name="duration_minutes" value="30" required>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Access code</label>
+        <input class="form-control" name="access_code" value="{{ default_code }}" required>
+      </div>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" name="is_active" id="is_active" checked>
+        <label class="form-check-label" for="is_active">Exam is active</label>
+      </div>
+      <button class="btn btn-primary mt-3" type="submit">Create</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,172 @@
+/* Admin UI polish (Admin portal only) */
+.admin-ui{
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255, 215, 0, .18), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(59, 130, 246, .16), transparent 55%),
+    linear-gradient(180deg, rgba(15, 23, 42, .85), rgba(15, 23, 42, .30));
+}
+
+.admin-shell{ max-width: 1180px; }
+
+.admin-topbar{
+  background: linear-gradient(90deg, rgba(2,6,23,0.95), rgba(15,23,42,0.95));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+
+.admin-logo{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.10);
+  padding: 6px;
+  border: 1px solid rgba(255,255,255,.10);
+}
+
+.admin-subnav-wrap{
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  backdrop-filter: blur(10px);
+  background: rgba(2,6,23,.25);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.admin-subnav{
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .55rem .6rem;
+  margin-top: .6rem;
+  margin-bottom: .6rem;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 14px 30px rgba(0,0,0,.18);
+}
+
+.admin-subnav--login{
+  justify-content: center;
+}
+
+.admin-navlink{
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .5rem .75rem;
+  border-radius: 14px;
+  text-decoration: none;
+  color: rgba(255,255,255,.78);
+  border: 1px solid transparent;
+  transition: transform .08s ease, background .15s ease, color .15s ease, border-color .15s ease;
+  font-weight: 600;
+}
+
+.admin-navlink i{ font-size: 1.05rem; opacity: .92; }
+
+.admin-navlink:hover{
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.10);
+}
+
+.admin-navlink.active{
+  background: rgba(255, 215, 0, .18);
+  border-color: rgba(255, 215, 0, .30);
+  color: rgba(255,255,255,.96);
+}
+
+.admin-ui .card{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 20px 45px rgba(0,0,0,.18);
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(10px);
+}
+
+.admin-ui .card .card-header{
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+}
+
+.admin-ui .table{
+  --bs-table-bg: transparent;
+}
+
+.admin-ui .table thead th{
+  color: rgba(255,255,255,.80);
+  border-bottom-color: rgba(255,255,255,.16);
+  font-weight: 700;
+}
+
+.admin-ui .table tbody td{
+  color: rgba(255,255,255,.86);
+  border-top-color: rgba(255,255,255,.08);
+}
+
+.admin-ui .table-hover tbody tr:hover{
+  background: rgba(255,255,255,.06);
+}
+
+.admin-ui .text-muted{ color: rgba(255,255,255,.60) !important; }
+
+.admin-ui .btn-outline-primary{
+  border-color: rgba(255,215,0,.40);
+  color: rgba(255,255,255,.92);
+}
+.admin-ui .btn-outline-primary:hover{
+  background: rgba(255,215,0,.18);
+  border-color: rgba(255,215,0,.55);
+  color: rgba(255,255,255,.98);
+}
+
+.admin-ui .btn-primary{
+  background: rgba(59,130,246,.95);
+  border-color: rgba(59,130,246,.55);
+  box-shadow: 0 10px 24px rgba(59,130,246,.20);
+}
+.admin-ui .btn-primary:hover{
+  filter: brightness(1.05);
+}
+
+.admin-ui .alert{
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(2,6,23,.35);
+  color: rgba(255,255,255,.92);
+}
+
+.admin-ui .form-control, .admin-ui .form-select{
+  border-radius: 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.92);
+}
+.admin-ui .form-control::placeholder{ color: rgba(255,255,255,.45); }
+
+.admin-ui .form-control:focus, .admin-ui .form-select:focus{
+  box-shadow: 0 0 0 .25rem rgba(255,215,0,.12);
+  border-color: rgba(255,215,0,.35);
+}
+
+.admin-ui .badge.bg-dark-subtle{
+  background: rgba(255,255,255,.08) !important;
+}
+
+.admin-ui .btn-gold{
+  border-radius: 12px;
+}
+
+
+.admin-card{
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.20);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+}
+.admin-card .card-header{
+  background: rgba(0,0,0,.18);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}

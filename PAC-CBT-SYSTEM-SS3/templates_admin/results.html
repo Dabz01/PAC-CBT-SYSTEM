@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h4 class="mb-0">Results</h4>
+    <div class="text-muted small">View students’ objective, theory and total scores. Download Official OGR as PDF.</div>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('dashboard') }}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('exams') }}"><i class="bi bi-journal-text me-1"></i>Exams</a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <form class="row g-2 align-items-end" method="get">
+      <div class="col-12 col-md-4">
+        <label class="form-label small">Subject</label>
+        <select class="form-select" name="subject">
+          <option value="">All subjects</option>
+          {% for s in subjects %}
+            <option value="{{ s }}" {% if subject_filter==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label small">Class</label>
+        <select class="form-select" name="class">
+          <option value="">All classes</option>
+          {% for c in classes %}
+            <option value="{{ c }}" {% if class_filter==c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-5">
+        <label class="form-label small">Exam (optional)</label>
+        <select class="form-select" name="exam_id">
+          <option value="">Newest exam for selected subject/class</option>
+          {% for e in exams %}
+            <option value="{{ e.id }}" {% if exam_id_filter==(e.id|string) %}selected{% endif %}>#{{ e.id }} — {{ e.title }} ({{ e.subject }} / {{ e.class }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 d-flex flex-wrap gap-2 mt-2">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-funnel me-1"></i>Apply</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('results') }}">Reset</a>
+
+        {% if subject_filter and class_filter %}
+          <a class="btn btn-outline-secondary ms-auto"
+             href="{{ url_for('download_admin_ogr_pdf') }}?subject={{ subject_filter|urlencode }}&class={{ class_filter|urlencode }}{% if exam_id_filter %}&exam_id={{ exam_id_filter|urlencode }}{% endif %}">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Download OGR PDF
+          </a>
+        {% else %}
+          <span class="text-muted small ms-auto">Select subject + class to download OGR PDF.</span>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Exam</th>
+          <th>Student</th>
+          <th>Username</th>
+          <th class="text-end">Objective</th>
+          <th class="text-end">Theory</th>
+          <th class="text-end">Total</th>
+          <th class="text-muted">Submitted</th>
+          <th class="text-end">Violations</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>
+            <div class="fw-semibold">{{ r.exam_title }}</div>
+            <div class="text-muted small">{{ r.exam_subject }} • {{ r.exam_class }}</div>
+          </td>
+          <td class="fw-semibold">{{ r.full_name }}</td>
+          <td class="text-muted">{{ r.student_username }}</td>
+          <td class="text-end">{{ (r.objective_score or 0)|round(0) }}</td>
+          <td class="text-end">{{ (r.theory_score or 0)|round(0) }}</td>
+          <td class="text-end fw-bold">{{ (r.total_score or 0)|round(0) }}</td>
+          <td class="text-muted small">{{ r.submitted_at }}</td>
+          <td class="text-end">{{ r.violations }}</td>
+        </tr>
+        {% endfor %}
+        {% if not rows %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No results found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Create Admin</h4>
+    <div class="text-muted small">Create a super admin or sub admin.</div>
+  </div>
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('create_user') }}"><i class="bi bi-arrow-left me-1"></i>Back</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post" class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Name</label>
+        <input class="form-control" name="full_name" required>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Username</label>
+        <input class="form-control" name="username" required>
+      </div>
+      <div class="col-12 col-md-6">
+        <label class="form-label">Password</label>
+        <input class="form-control" name="password" required>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Admin Type</label>
+        <select class="form-select" name="admin_type">
+          <option value="super">Super Admin (all rights)</option>
+          <option value="sub">Sub Admin (cannot view results)</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>Create Admin</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('users') }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

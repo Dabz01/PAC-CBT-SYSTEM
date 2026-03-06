@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-7 col-lg-5">
+
+    <div class="text-center mb-3">
+      <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width:64px;height:64px;background:rgba(13,110,253,.08);">
+        <i class="bi bi-award" style="font-size:28px;"></i>
+      </div>
+      <h3 class="mt-3 mb-1" style="animation: floatIn .7s ease both;">WELCOME RESULT ADMIN, PLEASE LOGIN</h3>
+      <div class="text-muted" style="animation: floatIn .9s ease both;">Authorized users only.</div>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="animation: floatIn 1.05s ease both;">
+      <div class="card-body p-4">
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" placeholder="e.g., Mr. Kizito" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" name="password" type="password" placeholder="Enter password" required>
+          </div>
+          <button class="btn btn-primary w-100" type="submit">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+{% endblock %}

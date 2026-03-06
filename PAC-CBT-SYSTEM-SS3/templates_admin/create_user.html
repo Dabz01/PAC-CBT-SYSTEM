@@ -1,0 +1,23 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="mb-0">Create User</h4>
+    <div class="text-muted small">Choose what type of user you want to create.</div>
+  </div>
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('users') }}"><i class="bi bi-arrow-left me-1"></i>Back to Users</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-primary" href="{{ url_for('create_student') }}"><i class="bi bi-mortarboard me-1"></i>Create Student</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('create_teacher') }}"><i class="bi bi-person-badge me-1"></i>Create Teacher</a>
+      {% if ADMIN_TYPE == 'super' %}
+        <a class="btn btn-outline-dark" href="{{ url_for('create_admin') }}"><i class="bi bi-shield-lock me-1"></i>Create Admin</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

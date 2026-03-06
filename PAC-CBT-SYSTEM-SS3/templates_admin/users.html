@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h4 class="mb-0">Users</h4>
+    <div class="text-muted small">Manage students, teachers, and admins.</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-primary" href="{{ url_for('create_user') }}"><i class="bi bi-plus-circle me-1"></i>Create User</a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <form class="row g-2 align-items-end" method="get">
+      <div class="col-12 col-md-4">
+        <label class="form-label small">Filter students by class</label>
+        <select class="form-select" name="class">
+          <option value="">All classes</option>
+          {% for c in allowed_classes %}
+            <option value="{{ c }}" {% if class_filter==c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-12 col-md-8 d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-funnel me-1"></i>Apply</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('users') }}">Reset</a>
+
+        {% if class_filter %}
+          <!-- ✅ Download FULL PDF (Name, Username, Password, Subjects) -->
+          <a class="btn btn-outline-danger" href="{{ url_for('download_students_pdf') }}?class={{ class_filter|urlencode }}">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Download Full PDF ({{ class_filter }})
+          </a>
+
+          <!-- ✅ Optional: Download credentials CSV with subjects -->
+          <a class="btn btn-outline-success" href="{{ url_for('download_student_credentials') }}">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>Download Credentials CSV
+          </a>
+        {% endif %}
+
+        <a class="btn btn-gold ms-auto" href="{{ url_for('subjects') }}"><i class="bi bi-book me-1"></i>Manage Subjects</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="width:70px;">Photo</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Class / Type</th>
+          <th style="width:150px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            {% if u.role == 'student' and u.student_photo %}
+              <img src="{{ url_for('static', filename=u.student_photo) }}" alt="photo" style="width:44px;height:44px;border-radius:12px;object-fit:cover;">
+            {% else %}
+              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width:44px;height:44px;background:rgba(0,0,0,.06);">
+                <i class="bi bi-person-fill text-muted"></i>
+              </div>
+            {% endif %}
+          </td>
+          <td class="fw-semibold">{{ u.display_name }}</td>
+          <td class="text-muted">{{ u.username }}</td>
+          <td>
+            {% if u.role == 'admin' %}
+              <span class="badge bg-dark">Admin</span>
+            {% elif u.role == 'teacher' %}
+              <span class="badge bg-primary">Teacher</span>
+            {% else %}
+              <span class="badge bg-success">Student</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if u.role == 'student' %}
+              <span class="badge bg-secondary">{{ u.student_class or '-' }}</span>
+            {% elif u.role == 'admin' %}
+              <span class="badge bg-secondary">{{ (u.admin_type or 'super')|capitalize }}</span>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('delete_user', user_id=u.id) }}" onsubmit="return confirm('Delete this user? This cannot be undone.');">
+              <button class="btn btn-sm btn-outline-danger" type="submit" {% if u.id == session.get('user_id') %}disabled{% endif %}>
+                <i class="bi bi-trash me-1"></i>Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not users %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div>
+    <h4 class="mb-0">Create Result Admin</h4>
+    <div class="text-muted small">Add another authorized Result Admin account.</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('result_home') }}"><i class="bi bi-arrow-left me-1"></i>Back</a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-7 col-lg-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input class="form-control" name="full_name" placeholder="e.g., Mr. James" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" placeholder="Unique username" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" name="password" type="password" placeholder="Password" required>
+          </div>
+          <button class="btn btn-primary w-100" type="submit"><i class="bi bi-check2-circle me-1"></i>Create</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

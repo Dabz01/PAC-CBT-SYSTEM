@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body p-5">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="logo-card" style="width:78px;height:78px;">
+              <img src="{{ url_for('static', filename='pac_logo.png') }}" alt="{{ SCHOOL_NAME }} logo">
+            </div>
+            <div>
+              <h3 class="mb-1">Exam Access Code</h3>
+              <div class="text-muted">Enter the code provided by your teacher.</div>
+            </div>
+          </div>
+          <span class="badge badge-soft">Student Portal</span>
+        </div>
+
+        <hr class="my-4">
+
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Access Code</label>
+            <input class="form-control" name="access_code" placeholder="e.g., A1B2C3" required>
+          </div>
+          <button class="btn btn-gold w-100 py-3 fw-semibold" type="submit">Continue</button>
+        </form>
+
+        <div class="d-flex justify-content-between mt-4">
+          <a class="small text-muted" href="{{ url_for('home') }}">Welcome</a>
+          <a class="small text-muted" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <div class="footer-note">Tip: Make sure your device is plugged in or fully charged.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

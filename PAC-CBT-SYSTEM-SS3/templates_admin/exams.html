@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <h3 class="mb-0">Admin Platform</h3>
+    <div class="text-muted small">
+      Start or stop exams created by teachers. Admins do not manage questions.
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-secondary" href="{{ url_for('users') }}">Users</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('results') }}">Results</a>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+
+    {% if exams|length == 0 %}
+      <p class="text-muted mb-0">No exams yet.</p>
+    {% else %}
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Class</th>
+              <th>Start</th>
+              <th>Duration</th>
+              <th>Code</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for e in exams %}
+            <tr>
+
+              <td>{{ e.title }}</td>
+
+              <td>{{ e.class }}</td>
+
+              <td class="small text-muted">
+                {{ e.start_at }}
+              </td>
+
+              <td>
+                {{ e.duration_minutes }} min
+              </td>
+
+              <td>
+                <code>{{ e.access_code }}</code>
+              </td>
+
+              <td>
+                {% if e.is_active == 1 %}
+                  <span class="badge bg-success">Active</span>
+                {% else %}
+                  <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+              </td>
+
+              <td>
+                <div class="d-flex gap-2 flex-wrap">
+
+                  {% if e.is_active == 1 %}
+                    <form method="post" action="{{ url_for('stop_exam', exam_id=e.id) }}">
+                      <button class="btn btn-sm btn-warning" type="submit">
+                        Stop
+                      </button>
+                    </form>
+                  {% else %}
+                    <form method="post" action="{{ url_for('start_exam', exam_id=e.id) }}">
+                      <button class="btn btn-sm btn-success" type="submit">
+                        Start
+                      </button>
+                    </form>
+                  {% endif %}
+
+                  <form method="post"
+                        action="{{ url_for('delete_exam', exam_id=e.id) }}"
+                        onsubmit="return confirm('Delete exam?');">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                      Delete
+                    </button>
+                  </form>
+
+                </div>
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      <p class="text-muted small mt-2 mb-0">
+        Teachers create exams (date + duration). Admin starts or stops exams; students can only take an exam while it is active.
+      </p>
+
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

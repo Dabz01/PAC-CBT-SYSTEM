@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <div>
+    <h3 class="mb-0">Theory Scores</h3>
+    <div class="text-muted small">Enter handwritten theory marks for: <span class="fw-semibold">{{ exam.title }}</span> — <span class="fw-semibold">{{ exam.class }}</span></div>
+  </div>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-secondary" href="{{ url_for('exams') }}">Back</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('download_exam_report_pdf', exam_id=exam.id) }}">Download OGR PDF</a>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    {% if students|length == 0 %}
+      <p class="text-muted mb-0">No submitted attempts yet for this exam.</p>
+    {% else %}
+      <form method="post">
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th style="width:70px;">S/N</th>
+                <th>Full Name</th>
+                <th style="width:120px;">Objective (50)</th>
+                <th style="width:140px;">Theory (50)</th>
+                <th style="width:120px;">Total (100)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in students %}
+                {% set total = (s.objective_score|int) + (s.theory_score|int) %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td class="fw-semibold">{{ s.full_name }}</td>
+                  <td>{{ s.objective_score }}</td>
+                  <td>
+                    <input class="form-control form-control-sm" type="number" min="0" max="50" name="theory_{{ s.attempt_id }}" value="{{ s.theory_score }}" />
+                  </td>
+                  <td class="fw-semibold">{{ total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-primary" type="submit">Save Theory Scores</button>
+        </div>
+      </form>
+      <p class="text-muted small mt-2 mb-0">Theory score is clamped to 0–50. Total = Objective + Theory.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

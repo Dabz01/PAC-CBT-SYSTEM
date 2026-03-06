@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card shadow-sm overflow-hidden">
+      <div class="card-body p-5 text-center">
+        <div class="d-flex justify-content-center mb-3">
+          <div class="logo-card">
+            <img src="{{ url_for('static', filename='pac_logo.png') }}" alt="{{ SCHOOL_NAME }} logo">
+          </div>
+        </div>
+
+        <div class="display-6 mb-2">🎉 Thank You!</div>
+        <p class="text-muted mb-4">Your examination has been submitted successfully.</p>
+
+        <div class="row g-3 justify-content-center">
+          <div class="col-md-4">
+            <div class="border rounded-4 p-3 bg-white h-100">
+              <div class="text-muted small">Exam</div>
+              <div class="fw-semibold">{{ attempt.title }}</div>
+              <div class="text-muted small">{{ attempt.class }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="border rounded-4 p-3 bg-white h-100">
+              <div class="text-muted small">Score</div>
+              <div class="fw-bold fs-2">{{ attempt.score }}</div>
+              <div class="text-muted small">out of {{ total }}</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="border rounded-4 p-3 bg-white h-100">
+              <div class="text-muted small">Proctoring</div>
+              <div class="fw-bold fs-2">{{ attempt.violations }}</div>
+              <div class="text-muted small">violations recorded</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-muted small">
+          Submitted at: {{ attempt.submitted_at }}
+        </div>
+
+        <div class="mt-4">
+          <a class="btn btn-primary btn-animated px-4 py-2" href="{{ url_for('enter_code') }}">Back to Access Code</a>
+          <a class="btn btn-outline-secondary ms-2 px-4 py-2" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <div class="footer-note mt-4">You may close this page now.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

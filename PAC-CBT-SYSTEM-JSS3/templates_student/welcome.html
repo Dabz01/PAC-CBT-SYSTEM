@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-11">
+    <div class="card shadow-sm overflow-hidden welcome-hero">
+      <div class="card-body p-5">
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
+          <div class="d-flex align-items-center gap-3">
+            <div class="logo-card">
+              <img src="{{ url_for('static', filename='pac_logo.png') }}" alt="{{ SCHOOL_NAME }} logo">
+            </div>
+            <div>
+              <h1 class="mb-2">Welcome to {{ SCHOOL_NAME }} CBT</h1>
+              <p class="text-muted mb-0">{{ SCHOOL_ADDRESS }}</p>
+              <div class="mt-2 d-flex flex-wrap gap-2">
+                <span class="badge badge-soft">Timed Assessment</span>
+                <span class="badge badge-soft">Screen Capture</span>
+                <span class="badge badge-soft">Anti-Tab Switch</span>
+                <span class="badge badge-soft">Auto-Submit on Timeout</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-end">
+            <span class="badge bg-dark px-3 py-2">Student Portal</span>
+            <div class="text-muted small mt-2">Secure • Fast • Proctored</div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row g-3">
+          <div class="col-md-7">
+            <div class="border rounded-4 p-4 bg-white h-100">
+              <h4 class="mb-2">Instructions</h4>
+              <ul class="text-muted mb-0">
+                <li>Login with your student username and password.</li>
+                <li>Enter the exam access code provided by your teacher.</li>
+                <li>On the exam page, start <strong>Screen Capture</strong> and go <strong>Fullscreen</strong> before clicking <strong>Start Exam</strong>.</li>
+                <li>Do not switch tabs/windows. Violations may auto-submit your exam.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="border rounded-4 p-4 bg-white h-100">
+              <h4 class="mb-3">Quick Start</h4>
+
+              <div class="pulse-ring">
+                <a class="btn btn-primary btn-animated w-100 py-3 fw-semibold" href="{{ url_for('login') }}">
+                  Start
+                </a>
+              </div>
+
+              <div class="mt-3 small text-muted">
+                <div class="fw-semibold mb-1">System Check (Recommended)</div>
+                <div>✔ Use Chrome/Edge</div>
+                <div>✔ Stable power and network</div>
+                <div>✔ Close other apps</div>
+              </div>
+
+              <p class="small text-muted mt-3 mb-0">If you have issues, contact your teacher or the ICT unit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">© {{ SCHOOL_NAME }} CBT • All rights reserved</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

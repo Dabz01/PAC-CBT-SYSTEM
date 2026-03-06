@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="exam-topbar">
+  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+    <div>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="badge bg-dark">Student Portal</span>
+        <span class="badge badge-soft">Proctored</span>
+        <span class="badge badge-soft">Timed</span>
+      </div>
+      <h3 class="mt-2 mb-1">{{ exam.title }}</h3>
+      <div class="text-muted">Class: {{ exam.class }} • Attempt #{{ attempt.id }}</div>
+    </div>
+
+    <div class="text-end">
+      <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
+        <span class="badge timer-pill" id="timer">Loading...</span>
+        <span class="badge bg-secondary" id="lockState">NOT STARTED</span>
+        <button class="btn btn-gold btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#qNav" aria-controls="qNav">
+          Questions
+        </button>
+      </div>
+      <div class="text-muted small mt-2">Theme: <span id="themeLabel"></span></div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <div class="d-flex justify-content-between small text-muted mb-1">
+      <span>Progress</span>
+      <span id="qCounter" class="me-2">Question 1/{{ questions|length }}</span><span id="progressText">0/{{ questions|length }}</span>
+    </div>
+    <div class="progress">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-warning mt-3" id="proctorBanner">
+  <strong>Exam Rules:</strong>
+  Enter full-screen (recommended). Do not switch tabs/windows. Too many violations auto-submit.
+</div>
+
+<div class="d-flex gap-2 mt-2 flex-wrap">
+  <button class="btn btn-outline-dark" id="btnFullscreen">Enter Fullscreen</button>
+  <button class="btn btn-danger" id="btnStartExam">Start Exam</button>
+
+  <div class="d-flex gap-2 me-auto">
+    <button class="btn btn-outline-secondary" id="btnPrev" type="button">Previous</button>
+    <button class="btn btn-outline-secondary" id="btnNext" type="button">Next</button>
+  </div>
+
+  <div class="ms-auto">
+    <button class="btn btn-primary btn-animated" id="btnSubmit" disabled>Submit</button>
+  </div>
+</div>
+
+<hr>
+
+{% if questions|length == 0 %}
+  <div class="alert alert-info">No questions have been added to this exam yet. Contact your teacher.</div>
+{% else %}
+  <form id="examForm">
+    {% set ns = namespace(last_section_title=None, last_section_instructions=None) %}
+    {% for q in questions %}
+      
+    <div class="question-panel" data-index="{{ loop.index0 }}">
+      {% set show_section = (q.section_title and q.section_title != ns.last_section_title) or (q.section_instructions and q.section_instructions != ns.last_section_instructions) %}
+      {% if show_section %}
+      <div class="alert alert-secondary shadow-sm mb-3" style="border-radius:12px;">
+        {% if q.section_title %}<div class="fw-bold">{{ q.section_title }}</div>{% endif %}
+        {% if q.section_instructions %}<div class="small text-muted mt-1">{{ q.section_instructions }}</div>{% endif %}
+      </div>
+      {% set ns.last_section_title = q.section_title %}
+      {% set ns.last_section_instructions = q.section_instructions %}
+      {% endif %}
+      <div class="card shadow-sm mb-3 question-card" id="qblock{{ q.id }}" data-index="{{ loop.index0 }}">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div class="fw-semibold mb-2">
+              <span class="badge bg-dark me-2">{{ loop.index }}</span>
+              {{ q.question_text }}
+            {% if q.image_path %}
+            <div class="mt-2"><img src="{{ url_for('static', filename=q.image_path) }}" alt="question image" style="max-width:100%; height:auto; border-radius:8px;"></div>
+            {% endif %}
+              <span class="text-muted small">({{ q.marks }} mark{{ 's' if q.marks != 1 else '' }})</span>
+            </div>
+            <a class="small text-muted" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Top</a>
+          </div>
+
+          {% set saved = saved_map.get(q.id, '') %}
+          {% for opt in ['A','B','C','D'] %}
+            {% set label = q['option_' + opt.lower()] %}
+            <div class="option-pill">
+              <div class="form-check m-0">
+                <input class="form-check-input answer" type="radio"
+                       name="q{{ q.id }}" id="q{{ q.id }}{{ opt }}"
+                       data-question-id="{{ q.id }}" value="{{ opt }}"
+                       {% if saved == opt %}checked{% endif %}>
+                <label class="form-check-label ms-2" for="q{{ q.id }}{{ opt }}">
+                  <strong>{{ opt }}.</strong> {{ label }}
+                </label>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="small text-muted mt-2" id="saveStatus{{ q.id }}"></div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </form>
+{% endif %}
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="qNav" aria-labelledby="qNavLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="qNavLabel">Question Navigator</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="text-muted small mb-3">Tap a number to jump. Highlighted = answered.</div>
+    <div class="d-flex flex-wrap gap-2">
+      {% set ns = namespace(last_section_title=None, last_section_instructions=None) %}
+    {% for q in questions %}
+        {% set answered = saved_map.get(q.id, '') %}
+        <a href="javascript:void(0)" class="qnav-btn {% if answered %}answered{% endif %}" data-qid="{{ q.id }}" data-index="{{ loop.index0 }}">
+          {{ loop.index }}
+        </a>
+      {% endfor %}
+    </div>
+    <hr>
+    <div class="small text-muted">
+      Review unanswered questions before submitting.
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+  <div id="saveToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMsg">Saved</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Use epoch milliseconds to avoid ISO parsing / timezone issues.
+  const endAtMs = {{ end_at_ms|int }};
+  const serverNowMs = {{ server_now_ms|int }};
+  const clientNowAtRender = Date.now();
+  const examId = {{ exam.id }};
+  const maxViolations = 3;
+
+  let violations = 0;
+  let examStarted = false;
+
+  function setLocked(locked){
+    document.querySelectorAll(".answer").forEach(r => r.disabled = !locked);
+    document.getElementById("btnSubmit").disabled = !locked;
+    document.getElementById("lockState").textContent = locked ? "STARTED" : "NOT STARTED";
+  }
+
+  function secondsLeft(){
+    // Countdown based on server time at render + client elapsed time.
+    const remainingAtRender = endAtMs - serverNowMs;
+    const elapsed = Date.now() - clientNowAtRender;
+    return Math.max(0, Math.floor((remainingAtRender - elapsed) / 1000));
+  }
+
+  function submitExam(){
+    window.location.href = `/student/exam/${examId}/submit`;
+  }
+
+  function renderTimer(){
+    if(!examStarted){
+      document.getElementById("timer").textContent = "Timer starts after Start Exam";
+      return;
+    }
+    const s = secondsLeft();
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    const el = document.getElementById("timer");
+    el.textContent = `Time left: ${m}m ${r}s`;
+    if (s <= 300) { el.classList.remove("bg-info","text-dark"); el.classList.add("bg-danger"); }
+    if (s <= 0) {
+      el.textContent = "Time up. Submitting…";
+      submitExam();
+    }
+  }
+
+  async function logViolation(type, details=""){
+    try{
+      const res = await fetch(`/student/exam/${examId}/proctor-log`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({type, details})
+      });
+      const data = await res.json();
+      if (data.ok){
+        violations = data.violations || 0;
+        if (violations >= maxViolations){
+          alert("Too many violations. Auto-submitting now.");
+          submitExam();
+        }
+      }
+    } catch(e){}
+  }
+
+  async function saveAnswer(qid, opt){
+    const statusEl = document.getElementById(`saveStatus${qid}`);
+    statusEl.textContent = "Saving…";
+    try{
+      const res = await fetch(`/student/exam/${examId}/save-answer`, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({question_id: qid, selected_option: opt})
+      });
+      const data = await res.json();
+      statusEl.textContent = data.ok ? "Saved ✓" : ("Not saved: " + (data.error || "error"));
+      if(data.ok) showToast("Saved ✓");
+    } catch(e){
+      statusEl.textContent = "Not saved (network error)";
+    }
+  }
+
+  async function enterFullscreen(){
+    try{
+      if(document.documentElement.requestFullscreen){
+        await document.documentElement.requestFullscreen();
+        return true;
+      }
+      return false;
+    }catch(e){
+      logViolation("fullscreen_failed", String(e));
+      return false;
+    }
+  }
+
+  function hardenKeys(e){
+    const k = e.key.toLowerCase();
+    if (e.altKey && (k === "tab" || k === "f4")) { e.preventDefault(); logViolation("shortcut_attempt", "Alt+"+e.key); }
+    if (e.ctrlKey && (k === "w" || k === "r" || k === "t" || k === "n")) { e.preventDefault(); logViolation("shortcut_attempt", "Ctrl+"+e.key); }
+    if (e.metaKey && (k === "w" || k === "r")) { e.preventDefault(); logViolation("shortcut_attempt", "Meta+"+e.key); }
+    if (k === "escape" && examStarted) { e.preventDefault(); logViolation("escape_pressed", "Escape key"); }
+  }
+
+  // Proctoring: detect leaving
+  document.addEventListener("visibilitychange", () => {
+    if (!examStarted) return;
+    if (document.hidden){
+      logViolation("tab_switch", "Document hidden (tab switch)");
+    }
+  });
+
+  window.addEventListener("blur", () => {
+    if (!examStarted) return;
+    logViolation("window_blur", "Window lost focus");
+  });
+
+  // NOTE: No beforeunload prompts (they trigger false "LEAVE SITE?" dialogs).
+
+  // Disable right click
+  document.addEventListener("contextmenu", (e) => {
+    if (!examStarted) return;
+    e.preventDefault();
+    logViolation("context_menu", "Right click attempt");
+  });
+
+  document.addEventListener("keydown", hardenKeys, true);
+
+  // Answer autosave
+  document.querySelectorAll(".answer").forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      if (!examStarted) return;
+      const qid = parseInt(e.target.dataset.questionId, 10);
+      const opt = e.target.value;
+      saveAnswer(qid, opt);
+    });
+  });
+
+  setLocked(false);
+
+  document.getElementById("btnFullscreen").addEventListener("click", enterFullscreen);
+
+  // ✅ Auto-submit if student exits fullscreen after starting.
+  document.addEventListener("fullscreenchange", () => {
+    if (!examStarted) return;
+    if (!document.fullscreenElement) {
+      submitExam();
+    }
+  });
+
+  document.getElementById("btnStartExam").addEventListener("click", async () => {
+    if(examStarted) return;
+
+    // ✅ Mandatory fullscreen on start.
+    const ok = await enterFullscreen();
+    if (!ok) {
+      alert("Fullscreen is required to start this exam. Please allow fullscreen and try again.");
+      return;
+    }
+
+    // ✅ If server time says exam window is already ended, submit immediately.
+    if (secondsLeft() <= 0) {
+      alert("Exam time is up. Submitting now.");
+      submitExam();
+      return;
+    }
+
+    examStarted = true;
+    setLocked(true);
+
+    document.getElementById("proctorBanner").classList.remove("alert-warning");
+    document.getElementById("proctorBanner").classList.add("alert-success");
+    document.getElementById("proctorBanner").innerHTML =
+      "<strong>Exam Started:</strong> Do not switch tabs/windows. Violations are recorded.";
+
+    document.getElementById("btnStartExam").disabled = true;
+    document.getElementById("btnFullscreen").disabled = true;
+
+    renderTimer();
+  });
+
+  document.getElementById("btnSubmit").addEventListener("click", (e) => {
+    e.preventDefault();
+    if(!confirm("Submit exam now?")) return;
+    submitExam();
+  });
+
+  renderTimer();
+  setInterval(renderTimer, 1000);
+</script>
+
+<script>
+  function updateProgress(){
+    const total = {{ questions|length }};
+    const answeredSet = new Set();
+    document.querySelectorAll(".answer:checked").forEach(r => answeredSet.add(r.dataset.questionId));
+    const answered = answeredSet.size;
+    const pct = total ? Math.round((answered/total)*100) : 0;
+    const bar = document.getElementById("progressBar");
+    const txt = document.getElementById("progressText");
+    if(bar) bar.style.width = pct + "%";
+    if(txt) txt.textContent = `${answered}/${total}`;
+  }
+
+  function showToast(message){
+    const el = document.getElementById("saveToast");
+    const msg = document.getElementById("toastMsg");
+    if(!el || !msg) return;
+    msg.textContent = message;
+    const toast = bootstrap.Toast.getOrCreateInstance(el, {delay: 1600});
+    toast.show();
+  }
+
+  const themeLabel = document.getElementById("themeLabel");
+  if(themeLabel){
+    themeLabel.textContent = (document.documentElement.getAttribute("data-theme") || "light").toUpperCase();
+  }
+
+  updateProgress();
+  document.querySelectorAll(".answer").forEach(r => r.addEventListener("change", updateProgress));
+</script>
+
+<script>
+  // Page-by-page question navigation
+  const qBlocks = Array.from(document.querySelectorAll(".question-panel"));
+  const qNavBtns = Array.from(document.querySelectorAll(".qnav-btn"));
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const qCounter = document.getElementById("qCounter");
+
+  let currentIndex = 0;
+
+  function setCurrent(idx){
+    if(!qBlocks.length) return;
+    if(idx < 0) idx = 0;
+    if(idx > qBlocks.length - 1) idx = qBlocks.length - 1;
+    currentIndex = idx;
+
+    qBlocks.forEach((b,i) => { b.style.display = (i === currentIndex) ? "" : "none"; });
+
+    // keep the view consistent
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    qNavBtns.forEach((b,i) => { b.classList.toggle("current", i === currentIndex); });
+
+    if(btnPrev) btnPrev.disabled = (currentIndex === 0);
+    if(btnNext) btnNext.disabled = (currentIndex === qBlocks.length - 1);
+    if(qCounter) qCounter.textContent = `Question ${currentIndex + 1}/${qBlocks.length}`;
+
+    // close offcanvas if open (nice UX on mobile)
+    const off = document.getElementById("qNav");
+    if(off){
+      const inst = bootstrap.Offcanvas.getInstance(off);
+      if(inst) inst.hide();
+    }
+  }
+
+  // Navigator click
+  qNavBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const idx = parseInt(btn.dataset.index || "0", 10);
+      setCurrent(idx);
+    });
+  });
+
+  // Prev/Next
+  if(btnPrev) btnPrev.addEventListener("click", () => setCurrent(currentIndex - 1));
+  if(btnNext) btnNext.addEventListener("click", () => setCurrent(currentIndex + 1));
+
+  // Mark answered nav button green on selection
+  document.querySelectorAll(".answer").forEach(r => {
+    r.addEventListener("change", () => {
+      const qid = r.dataset.questionId;
+      const nav = document.querySelector(`.qnav-btn[data-qid="${qid}"]`);
+      if(nav) nav.classList.add("answered");
+    });
+  });
+
+  // Initialize
+  setCurrent(0);
+</script>
+
+{% endblock %}

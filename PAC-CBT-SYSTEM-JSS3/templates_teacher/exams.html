@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <div>
+    <h3 class="mb-0">Teacher Platform</h3>
+    <div class="text-muted small">View your created examinations, manage questions, and download the official OGR report sheet.</div>
+  </div>
+  <a class="btn btn-primary" href="{{ url_for('create_exam') }}">Create Exam</a>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    {% if exams|length == 0 %}
+      <p class="text-muted mb-0">No exams yet.</p>
+    {% else %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr>
+            <th>Subject</th><th>Class</th><th>Start</th><th>Duration</th><th>Status</th><th></th>
+          </tr></thead>
+          <tbody>
+            {% for e in exams %}
+              <tr>
+                <td>{{ e.title }}</td>
+                <td>{{ e.class }}</td>
+                <td class="small text-muted">{{ e.start_at }}</td>
+                <td>{{ e.duration_minutes }} min</td>
+                <td>
+                  {% if e.is_active == 1 %}
+                    <span class="badge bg-success">active</span>
+                  {% else %}
+                    <span class="badge bg-secondary">inactive</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('questions', exam_id=e.id) }}">Questions</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('theory_scores', exam_id=e.id) }}">Theory Scores</a>
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('download_exam_report_pdf', exam_id=e.id) }}">
+                      <i class="bi bi-file-earmark-pdf me-1"></i>OGR PDF
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mt-2 mb-0">Exams are activated only by Admin (Start/Stop). Students can take an exam only while it is active.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

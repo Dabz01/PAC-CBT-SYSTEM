@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-6">
+    <div class="card shadow-sm overflow-hidden">
+      <div class="card-body p-5">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="logo-card" style="width:86px;height:86px;">
+            <img src="{{ url_for('static', filename='pac_logo.png') }}" alt="{{ SCHOOL_NAME }} logo">
+          </div>
+          <div>
+            <h3 class="mb-1">Student Login</h3>
+            <div class="text-muted">{{ SCHOOL_NAME }} CBT • Secure Student Access</div>
+          </div>
+        </div>
+
+
+        <form method="post" class="mt-3">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" name="username" placeholder="e.g., pac_student01" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" name="password" placeholder="••••••••" required>
+          </div>
+          <button class="btn btn-primary btn-animated w-100 py-3 fw-semibold" type="submit">Login</button>
+        </form>
+
+        <div class="d-flex justify-content-between mt-4">
+          <a class="small text-muted" href="{{ url_for('home') }}">← Back to Welcome</a>
+          <span class="small text-muted">{{ SCHOOL_ADDRESS }}</span>
+        </div>
+
+        <div class="footer-note">Powered by {{ SCHOOL_NAME }} ICT Unit</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

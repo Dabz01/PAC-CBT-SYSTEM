@@ -1,0 +1,77 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <div>
+    <h3 class="mb-0">Exam Timetable</h3>
+    <div class="text-muted small">
+      Welcome, <b>{{ student.full_name or 'Student' }}</b> —
+      Class: <span class="badge bg-primary">{{ student.class }}</span>
+    </div>
+  </div>
+  <a class="btn btn-outline-primary" href="{{ url_for('enter_code') }}">Enter Access Code</a>
+</div>
+
+<div class="row mt-3 g-3">
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="mb-2">Active Exams</h5>
+        {% if active|length == 0 %}
+          <div class="text-muted small">No active exams right now.</div>
+        {% else %}
+          {% for e in active %}
+            {% set s,eend = exam_window(e) %}
+            <div class="border rounded p-3 mb-2">
+              <div class="fw-bold">{{ e.title }}</div>
+              <div class="text-muted small">Window: {{ s }} → {{ eend }}</div>
+              <div class="text-muted small">Access code: <b>{{ e.access_code }}</b></div>
+              <a class="btn btn-sm btn-primary mt-2" href="{{ url_for('start_exam', exam_id=e.id) }}">Start</a>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="mb-2">Upcoming Exams</h5>
+        {% if upcoming|length == 0 %}
+          <div class="text-muted small">No upcoming exams.</div>
+        {% else %}
+          {% for e in upcoming %}
+            {% set s,eend = exam_window(e) %}
+            <div class="border rounded p-3 mb-2">
+              <div class="fw-bold">{{ e.title }}</div>
+              <div class="text-muted small">Starts: {{ s }}</div>
+              <div class="text-muted small">Duration: {{ e.duration_minutes }} mins</div>
+              <div class="text-muted small">Access code: <b>{{ e.access_code }}</b></div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="mb-2">Past Exams</h5>
+        {% if past|length == 0 %}
+          <div class="text-muted small">No past exams listed.</div>
+        {% else %}
+          {% for e in past %}
+            {% set s,eend = exam_window(e) %}
+            <div class="border rounded p-3 mb-2">
+              <div class="fw-bold">{{ e.title }}</div>
+              <div class="text-muted small">Ended: {{ eend }}</div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

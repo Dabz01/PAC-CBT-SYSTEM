@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+  <h3>Create Exam</h3>
+  <a class="btn btn-outline-secondary" href="{{ url_for('exams') }}">Back</a>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <form method="post" style="max-width:720px;">
+      <div class="mb-2">
+        <label class="form-label">Title (Subject)</label>
+        <select class="form-select" name="title" required>
+          <option value="">Select subject...</option>
+          {% for s in subjects_offered %}
+            <option value="{{ s }}">{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Class</label>
+        <select class="form-select" name="class" required>
+          <option value="">Select class...</option>
+          {% for c in allowed_classes %}
+            <option value="{{ c }}">{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Exam Date</label>
+        <input class="form-control" type="date" name="exam_date" required>
+        <div class="form-text">Teachers pick the date only. Admin will start/stop the exam.</div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Duration (minutes)</label>
+        <input class="form-control" type="number" min="1" name="duration_minutes" value="30" required>
+      </div>
+      <button class="btn btn-primary mt-3" type="submit">Create</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
